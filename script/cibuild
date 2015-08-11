@@ -7,6 +7,39 @@ set -e
 BASE_DIR=$(cd `dirname $0`/../; pwd)
 cd $BASE_DIR
 
-pwd
-echo "Ci Building, and env value[$CI_SAMPLE_VALUE]"
-sh $BASE_DIR/script/test
+function up() {
+  BASE_NAME=$1
+  BUILD_WAR="build/libs/${BASE_NAME}##${CIRCLE_BUILD_NUM}.war"
+  cp build/libs/$BASE_NAME.war $BUILD_WAR
+  upload $BUILD_WAR
+}
+function upload() {
+  ruby $BASE_DIR/script/upload.rb $*
+}
+
+echo "Tests started at..."
+date "+%H:%M:%S"
+
+echo "Running tests ..."
+date "+%H:%M:%S"
+
+sh script/test
+
+ruby script/upload.rb
+
+#cd common
+#./gradlew clean eclipse build
+
+#cd ../api
+#./gradlew clean eclipse buildWeb -x test
+#up api
+
+#cd ../front
+#./gradlew clean eclipse buildWeb -x test
+#up front
+
+#cd ../management
+#./gradlew clean eclipse buildWeb -x test
+#up management
+
+cd $BASE_DIR
