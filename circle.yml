@@ -1,0 +1,54 @@
+general:
+  branches:
+    ignore:
+      - /ci_skip/ # setting here
+machine:
+  timezone:
+    Asia/Tokyo
+  ruby:
+    version:
+      2.2.2
+  java:
+    version:
+      oraclejdk8
+  environment:
+    CIRCLE_ENV: test
+    DB_URL: jdbc:mysql://localhost/circle_test
+    DB_USER: ubuntu
+    DB_PASSWORD:
+## Customize checkout
+checkout:
+  post:
+    - git submodule sync
+    - git submodule update --init
+
+## Customize dependencies
+dependencies:
+  pre:
+    - cd script && bundle install --path vendor/bundle
+## Customize database setup
+database:
+  override:
+    - echo 'migrate'
+## Customize test commands
+test:
+  override:
+    - sh script/cibuild
+  post:
+    - bundle exec rake jasmine:ci: # add an extra test type
+        environment:
+          RAILS_ENV: test
+          RACK_ENV: test
+
+## Customize deployment commands
+deployment:
+  production:
+    branch: dep
+    commands:
+      - sh script/build dev
+      - sh script/deploy dev
+  staging:
+    branch: master
+    commands:
+      - sh script/build production
+      - sh script/deploy production

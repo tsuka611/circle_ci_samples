@@ -8,5 +8,5 @@ BASE_DIR=$(cd `dirname $0`/../; pwd)
 cd $BASE_DIR
 
 pwd
-echo "Ci Building."
+echo "Ci Building, and env value[$CI_SAMPLE_VALUE]"
 sh $BASE_DIR/script/test
