@@ -1,0 +1,12 @@
+#!/bin/sh
+# script/cibuild: Setup environment for CI to run tests. This is primarily
+#                 designed to run on the continuous integration server.
+
+
+set -e
+BASE_DIR=$(cd `dirname $0`/../; pwd)
+cd $BASE_DIR
+
+pwd
+echo "Ci Building."
+sh $BASE_DIR/script/test
